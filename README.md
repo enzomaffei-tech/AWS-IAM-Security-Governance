@@ -13,22 +13,22 @@ Este projeto simula a estruturação e governança de acessos de uma organizaç�
 ---
 
 ## 📐 Arquitetura & Matriz de Governança de Acessos
- ```text
-                              +---------------------------------------+
-                              |   Politica Transversal (Force MFA)    |
-                              +---------------------------------------+
-                                                  |
-          +---------------------------------------+---------------------------------------+
-          |                                       |                                       |
-          v                                       v                                       v
-  
-+-----------------------------+     +-----------------------------+     +-----------------------------+
-|    Grp-Developers-Policy    |     |   Grp-SOC-Analysts-Policy   |     |     Grp-Auditors-Policy     |
-+-----------------------------+     +-----------------------------+     +-----------------------------+
-| • Gerenciamento EC2/S3      |     | • Leitura CloudTrail/Logs   |     | • Leitura AWS Config / Hub  |
-| • Restrito a us-east-1      |     | • Leitura SSM Parameter     |     | • AssumeRole Cross-Account  |
-| • Deny: Alteracoes em IAM   |     | • Deny: Exclusao de Logs    |     | • Leitura SecurityAudit     |
-+-----------------------------+     +-----------------------------+     +-----------------------------+
+
+```mermaid
+graph TD
+    subgraph Politica_Global ["🛡️ Politica Transversal"]
+        MFA["ForceMFA-Policy"]
+    end
+
+    MFA --> DEV["Grp-Developers-Policy"]
+    MFA --> SOC["Grp-SOC-Analysts-Policy"]
+    MFA --> AUD["Grp-Auditors-Policy"]
+
+    subgraph Grupos ["Perfis de Acesso"]
+        DEV --- D1["• Gerenciamento EC2/S3<br>• Restrito a us-east-1<br>• Deny: Alterações em IAM"]
+        SOC --- S1["• Leitura CloudTrail/Logs<br>• Leitura SSM Parameter<br>• Deny: Exclusão de Logs"]
+        AUD --- A1["• Leitura AWS Config / Hub<br>• AssumeRole Cross-Account<br>• Leitura SecurityAudit"]
+    end
 ```
 
 ### 🔐 Matriz de Perfis (RBAC)
@@ -51,35 +51,18 @@ Este projeto simula a estruturação e governança de acessos de uma organizaç�
 
 ---
 
-## 📂 Estrutura do Repositório
+## 📂 Estrutura do Projeto & Modulos
 
-```text
-├── README.md                           <-- Documentação principal
-├── policies/                            <-- Politicas JSON personalizadas
-│   ├── Grp-Developers-Policy.json
-│   ├── Grp-SOC-Analysts-Policy.json
-│   ├── Grp-Auditors-Policy.json
-│   └── ForceMFA-Policy.json
-├── scripts/                            <-- Script Python (Boto3) para teste do SSM
-│   └── get_secure_param.py
-└── evidence/                           <-- Provas de validação e testes
+Abaixo estão os artefatos de código desenvolvidos para esta solução de governança:
 
+* **Políticas IAM (JSON):**
+  * 🔒 [Politica do Time de Devs](policies/Grp-Developers-Policy.json)
+  * 🛡️ [Politica do Time do SOC](policies/Grp-SOC-Analysts-Policy.json)
+  * 📋 [Politica do Time de Auditores](policies/Grp-Auditors-Policy.json)
+  * 🔑 [Politica Global de Enforcing MFA](policies/ForceMFA-Policy.json)
 
-```mermaid
-graph TD
-    subgraph Politica_Global ["🛡️ Politica Transversal"]
-        MFA["ForceMFA-Policy"]
-    end
+* **Automação & Scripts:**
+  * 🐍 [Script de Leitura do SSM Parameter Store](scripts/get_secure_param.py)
 
-    MFA --> DEV["Grp-Developers-Policy"]
-    MFA --> SOC["Grp-SOC-Analysts-Policy"]
-    MFA --> AUD["Grp-Auditors-Policy"]
-
-    subgraph Grupos ["Perfis de Acesso (RBAC)"]
-        DEV --- D1["• Gerenciamento EC2/S3<br>• Restrito a us-east-1<br>• Deny: Alterações em IAM"]
-        SOC --- S1["• Leitura CloudTrail/Logs<br>• Leitura SSM Parameter<br>• Deny: Exclusão de Logs"]
-        AUD --- A1["• Leitura AWS Config / Hub<br>• AssumeRole Cross-Account<br>• Leitura SecurityAudit"]
-    end
-```
-    ├── access_denied_cloudtrail.png
-    └── ssm_session_manager.png
+* **Projetos Relacionados:**
+  * 🌐 [Repositorio: AWS VPC & Network Security](https://github.com/seu-usuario/aws-vpc-network-security)
