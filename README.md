@@ -13,6 +13,7 @@ Este projeto simula a estruturação e governança de acessos de uma organizaç�
 ---
 
 ## 📐 Arquitetura & Matriz de Governança de Acessos
+ ```text
                               +---------------------------------------+
                               |   Politica Transversal (Force MFA)    |
                               +---------------------------------------+
@@ -20,7 +21,7 @@ Este projeto simula a estruturação e governança de acessos de uma organizaç�
           +---------------------------------------+---------------------------------------+
           |                                       |                                       |
           v                                       v                                       v
-  ```text
+  
 +-----------------------------+     +-----------------------------+     +-----------------------------+
 |    Grp-Developers-Policy    |     |   Grp-SOC-Analysts-Policy   |     |     Grp-Auditors-Policy     |
 +-----------------------------+     +-----------------------------+     +-----------------------------+
