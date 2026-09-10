@@ -1,0 +1,36 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowSelfServiceMFAConfiguration",
+      "Effect": "Allow",
+      "Action": [
+        "iam:ListUsers",
+        "iam:CreateVirtualMFADevice",
+        "iam:EnableMFADevice",
+        "iam:ResyncMFADevice",
+        "iam:ListVirtualMFADevices",
+        "iam:ListMFADevices"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "DenyAllActionsIfMFANotPresent",
+      "Effect": "Deny",
+      "NotAction": [
+        "iam:CreateVirtualMFADevice",
+        "iam:EnableMFADevice",
+        "iam:ListMFADevices",
+        "iam:ListUsers",
+        "iam:ListVirtualMFADevices",
+        "iam:ResyncMFADevice"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "BoolIfExists": {
+          "aws:MultiFactorAuthPresent": "false"
+        }
+      }
+    }
+  ]
+}
