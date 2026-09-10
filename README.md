@@ -60,6 +60,20 @@ Abaixo estão os artefatos de código desenvolvidos para esta solução de gover
   * 🛡️ [Politica do Time do SOC](policies/Grp-SOC-Analysts-Policy.json)
   * 📋 [Politica do Time de Auditores](policies/Grp-Auditors-Policy.json)
   * 🔑 [Politica Global de Enforcing MFA](policies/ForceMFA-Policy.json)
+    
+---
+
+## 🐍 Automação DevSecOps: Gestão Segura de Segredos com Python (Boto3)
+
+### 🎯 Finalidade e Motivação
+Em projetos de software e infraestrutura, a presença de credenciais salvas diretamente no código-fonte (*hardcoded passwords*) representa um das maiores vulnerabilidades de segurança. 
+
+O script [`scripts/get_secure_param.py`](scripts/get_secure_param.py) foi desenvolvido para solucionar esse risco, implementando o padrão de **Gestão Dinâmica de Segredos**:
+
+1. **Eliminação de Senhas Expostas:** O código não armazena nenhuma chave de API ou senha de banco de dados.
+2. **Integração com AWS SSM Parameter Store:** As credenciais são armazenadas com criptografia de ponta a ponta via AWS KMS em um parâmetro do tipo `SecureString`.
+3. **Consumo Seguro em Tempo de Execução:** O Python utiliza a biblioteca `boto3` para solicitar a chave à AWS apenas quando a aplicação está em execução.
+4. **Validação do IAM:** A leitura do segredo é autorizada **somente** se a identidade que executa o script tiver a ação `ssm:GetParameter` permitida na política do IAM (como implementado na `Grp-SOC-Analysts-Policy`).
 
 * **Automação & Scripts:**
   * 🐍 [Script de Leitura do SSM Parameter Store](scripts/get_secure_param.py)
