@@ -63,5 +63,23 @@ Este projeto simula a estruturação e governança de acessos de uma organizaç�
 ├── scripts/                            <-- Script Python (Boto3) para teste do SSM
 │   └── get_secure_param.py
 └── evidence/                           <-- Provas de validação e testes
+
+
+```mermaid
+graph TD
+    subgraph Politica_Global ["🛡️ Politica Transversal"]
+        MFA["ForceMFA-Policy"]
+    end
+
+    MFA --> DEV["Grp-Developers-Policy"]
+    MFA --> SOC["Grp-SOC-Analysts-Policy"]
+    MFA --> AUD["Grp-Auditors-Policy"]
+
+    subgraph Grupos ["Perfis de Acesso (RBAC)"]
+        DEV --- D1["• Gerenciamento EC2/S3<br>• Restrito a us-east-1<br>• Deny: Alterações em IAM"]
+        SOC --- S1["• Leitura CloudTrail/Logs<br>• Leitura SSM Parameter<br>• Deny: Exclusão de Logs"]
+        AUD --- A1["• Leitura AWS Config / Hub<br>• AssumeRole Cross-Account<br>• Leitura SecurityAudit"]
+    end
+```
     ├── access_denied_cloudtrail.png
     └── ssm_session_manager.png
