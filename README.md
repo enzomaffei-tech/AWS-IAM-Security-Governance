@@ -13,22 +13,22 @@ Este projeto simula a estruturação e governança de acessos de uma organizaç�
 ---
 
 ## 📐 Arquitetura & Matriz de Governança de Acessos
-                      +---------------------------------------+
-                      |   Politica Transversal (Force MFA)    |
-                      +---------------------------------------+
-                                          |
-  +---------------------------------------+---------------------------------------+
-  |                                       |                                       |
-  v                                       v                                       v
-
+                              +---------------------------------------+
+                              |   Politica Transversal (Force MFA)    |
+                              +---------------------------------------+
+                                                  |
+          +---------------------------------------+---------------------------------------+
+          |                                       |                                       |
+          v                                       v                                       v
+  ```text
 +-----------------------------+     +-----------------------------+     +-----------------------------+
 |    Grp-Developers-Policy    |     |   Grp-SOC-Analysts-Policy   |     |     Grp-Auditors-Policy     |
 +-----------------------------+     +-----------------------------+     +-----------------------------+
 | • Gerenciamento EC2/S3      |     | • Leitura CloudTrail/Logs   |     | • Leitura AWS Config / Hub  |
 | • Restrito a us-east-1      |     | • Leitura SSM Parameter     |     | • AssumeRole Cross-Account  |
-| • Deny: Alterações em IAM   |     | • Deny: Exclusão de Logs    |     | • Leitura SecurityAudit     |
+| • Deny: Alteracoes em IAM   |     | • Deny: Exclusao de Logs    |     | • Leitura SecurityAudit     |
 +-----------------------------+     +-----------------------------+     +-----------------------------+
-
+```
 
 ### 🔐 Matriz de Perfis (RBAC)
 
