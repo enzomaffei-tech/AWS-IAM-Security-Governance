@@ -63,6 +63,3 @@ Abaixo estão os artefatos de código desenvolvidos para esta solução de gover
 
 * **Automação & Scripts:**
   * 🐍 [Script de Leitura do SSM Parameter Store](scripts/get_secure_param.py)
-
-* **Projetos Relacionados:**
-  * 🌐 [Repositorio: AWS VPC & Network Security](https://github.com/seu-usuario/aws-vpc-network-security)
