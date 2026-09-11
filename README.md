@@ -77,3 +77,17 @@ O script [`scripts/get_secure_param.py`](scripts/get_secure_param.py) foi desenv
 
 * **Automação & Scripts:**
   * 🐍 [Script de Leitura do SSM Parameter Store](scripts/get_secure_param.py)
+
+## 🧪 Evidências do Projeto
+
+### 1. Bloqueio de Elevação de Privilégios (Access Denied)
+![Acesso Negado CLI](evidence/access_denied_cli.png)
+
+### 2. Automação Boto3 e Consumo do SSM Parameter Store
+![SSM Boto3](evidence/ssm_parameter_boto3.png)
+
+### 3. Acesso Seguro a Servidores (SSM Session Manager)
+![Session Manager](evidence/ssm_session_manager.png)
+
+### 4. Trilha de Auditoria e Logs no CloudTrail
+![CloudTrail Events](evidence/cloudtrail_event_history.png)
