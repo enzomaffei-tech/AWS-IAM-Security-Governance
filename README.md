@@ -35,16 +35,16 @@ graph TD
 
 | Grupo (IAM Group) | Escopo de Atuação | Permissões Concedidas | Controles de Segurança & Restrições |
 | :--- | :--- | :--- | :--- |
-| **`Grp-Developers`** | Gestão de aplicações e infra de Dev | `ec2:*` (PowerUser), `s3:*` | Restrito à região `us-east-1`; Deny em ações de IAM |
-| **`Grp-SOC-Analysts`** | Resposta a incidentes e monitoramento | `cloudtrail:LookupEvents`, `logs:*`, `ssm:GetParameter` | Bloqueio explícito de exclusão/alteração de logs (`cloudtrail:DeleteTrail`) |
-| **`Grp-Auditors`** | Governança, Risco e Conformidade (GRC) | `config:Get*`, `securityhub:Get*`, `sts:AssumeRole` | Acesso Cross-Account condicionado à presença de MFA ativo |
-| **`Global / Todos`** | Autenticação padrão | Gerenciamento de credencial própria | **Deny Explicito** para qualquer chamada de API caso o MFA não esteja ativo |
+| **`Grp-Developers`** | Gestão de aplicações e infra de Dev | `ec2:Start/Stop/Reboot`, `s3:Get/Put/Delete` | Restrito à região `us-east-1`; Deny em ações de IAM |
+| **`Grp-SOC-Analysts`** | Resposta a incidentes e monitoramento | `cloudtrail:LookupEvents`, `logs:*`, `ssm:GetParameter` | Bloqueio explícito de exclusão/alteração de logs (`cloudtrail:DeleteTrail`, `logs:delete`) |
+| **`Grp-Auditors`** | Governança, Risco e Conformidade (GRC) | `config:Get*`, `securityhub:Get*`, `iam:GenerateCredentialReport` | Acesso Cross-Account via `sts:AssumeRole` condicionado a MFA ativo |
+| **`Global / Todos`** | Autenticação padrão | Gerenciamento de credencial própria (MFA) | **Deny Explicito** para qualquer chamada de API caso o MFA não esteja ativo na sessão |
 
 ---
 
 ## 🛠️ Tecnologias & Serviços Utilizados
-- **AWS IAM:** Custome Managed Policies, Groups, RBAC e Condition Keys.
-- **AWS STS (Security Token Service):** Concessão de acesso temporário e validação de identidade (`sts:AssumeRole`, `sts:get-caller-identity`).
+- **AWS IAM:** Customer Managed Policies, Groups, RBAC e Condition Keys (`aws:RequestedRegion`, `aws:MultiFactorAuthPresent`).
+- **AWS STS (Security Token Service):** Concessão de acesso temporário e validação de identidade (`sts:AssumeRole`).
 - **AWS Systems Manager (SSM):** Session Manager para acesso SSH sem porta 22 aberta e Parameter Store (`SecureString`) para gestão de segredos.
 - **AWS CloudTrail & CloudWatch:** Trilha de auditoria e monitoramento de falhas de autenticação (`AccessDenied`).
 - **AWS CLI & Python (Boto3):** Automação de testes e consultas seguras via terminal.
@@ -75,19 +75,20 @@ O script [`scripts/get_secure_param.py`](scripts/get_secure_param.py) foi desenv
 3. **Consumo Seguro em Tempo de Execução:** O Python utiliza a biblioteca `boto3` para solicitar a chave à AWS apenas quando a aplicação está em execução.
 4. **Validação do IAM:** A leitura do segredo é autorizada **somente** se a identidade que executa o script tiver a ação `ssm:GetParameter` permitida na política do IAM (como implementado na `Grp-SOC-Analysts-Policy`).
 
-* **Automação & Scripts:**
-  * 🐍 [Script de Leitura do SSM Parameter Store](scripts/get_secure_param.py)
-
 ## 🧪 Evidências do Projeto
 
 ### 1. Bloqueio de Elevação de Privilégios (Access Denied)
+Tentativa de criação de usuário não autorizado via AWS CLI interceptada pelas regras de negação explícita do IAM:
 ![Acesso Negado CLI](evidence/access_denied_cli.png)
 
 ### 2. Automação Boto3 e Consumo do SSM Parameter Store
+Execução do script Python resgatando credencial criptografada do SSM Parameter Store sem exposição no código:
 ![SSM Boto3](evidence/ssm_parameter_boto3.png)
 
 ### 3. Acesso Seguro a Servidores (SSM Session Manager)
+Conexão interativa à instância EC2 realizada via AWS Systems Manager Session Manager (sem necessidade de porta 22/SSH exposta):
 ![Session Manager](evidence/ssm_session_manager.png)
 
 ### 4. Trilha de Auditoria e Logs no CloudTrail
+Registro detalhado das chamadas de API capturadas para análise de incidentes e auditoria do SOC:
 ![CloudTrail Events](evidence/cloudtrail_event_history.png)
